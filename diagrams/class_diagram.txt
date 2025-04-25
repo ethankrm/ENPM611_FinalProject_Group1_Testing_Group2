@@ -1,0 +1,127 @@
+classDiagram
+    class config.py {
+        -_init_config(path)
+        -_get_default_path()
+        +get_parameter(parameter_name, default)
+        +convert_to_typed_value(value)
+        +set_parameter(name, value)
+        +overwrite_from_args(args)
+    }
+    class data_loader.py {
+    }
+    class engagement_resolution_analysis.py {
+    }
+    class issue_reopen_analysis.py {
+    }
+    class top_contributors_analysis.py {
+    }
+    class model.py {
+    }
+    class run.py {
+        +parse_args()
+    }
+
+    class DataLoader {
+        +String data_path
+        +get_issues() List~Issue~
+        -_load() List~Issue~
+    }
+    class EngagementResolutionAnalysis {
+        +String LABEL_ID
+        +run()
+        -_get_engagement(issue) int
+        -_get_resolution_time(issue) int
+    }
+    class IssueReopenAnalysis {
+        +String USER
+        +run()
+        -_is_reopened(issue) boolean
+    }
+    class TopContributorAnalysis {
+        +String LABEL_ID
+        +run()
+        -_get_handlers(issue)
+    }
+    class State {
+        <<enumeration>>
+        open
+        closed
+    }
+    class Event {
+        +String event_type
+        +User author
+        +datetime event_date
+        +Label label
+        +String comment
+        +from_json(jobj)
+    }
+    class Issue {
+        +String url
+        +User creator
+        +List~Label~ labels
+        +State State
+        +List~User~ assignees
+        +String title
+        +String text
+        +int number
+        +datetime created_date
+        +datetime updated_date
+        +String timeline_url
+        +List~Event~ events
+        +from_json(jobj)
+    }
+    class User {
+        +int id
+        +String name
+    }
+    class Label {
+        +int id
+        +String name
+    }
+
+
+    data_loader.py --o DataLoader
+    data_loader.py --o config.py
+    data_loader.py --o Issue
+
+    engagement_resolution_analysis.py --o EngagementResolutionAnalysis
+    engagement_resolution_analysis.py --> DataLoader
+    engagement_resolution_analysis.py --> Issue
+    engagement_resolution_analysis.py --> Event
+    engagement_resolution_analysis.py --> Label
+    engagement_resolution_analysis.py --o config.py
+
+    issue_reopen_analysis.py --o IssueReopenAnalysis
+    issue_reopen_analysis.py --> DataLoader
+    issue_reopen_analysis.py --> Issue
+    issue_reopen_analysis.py --> Event
+    issue_reopen_analysis.py --> Label
+    issue_reopen_analysis.py --> State
+    issue_reopen_analysis.py --o config.py
+
+    top_contributors_analysis.py --o TopContributorAnalysis
+    top_contributors_analysis.py --> DataLoader
+    top_contributors_analysis.py --> Issue
+    top_contributors_analysis.py --> Event
+    top_contributors_analysis.py --> Label
+    top_contributors_analysis.py --> User
+    top_contributors_analysis.py --o config.py
+
+    model.py --o State
+    model.py --o Event
+    model.py --o Issue
+    model.py --o User
+    model.py --o Label
+
+    run.py --o config.py
+    run.py --> EngagementResolutionAnalysis
+    run.py --> IssueReopenAnalysis
+    run.py --> TopContributorAnalysis
+
+    Issue --o Label
+    Issue --o User
+    Issue --o Event
+    Issue --o State
+
+    Event --o User
+    Event --o Label
