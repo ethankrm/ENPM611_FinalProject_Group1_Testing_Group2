@@ -33,13 +33,18 @@ class TestAnalysis1(unittest.TestCase):
 
     def test_record_event2(self):
         for entry in self.contributor1.frequency_activity:
-            if entry ["event_type"] == "closed":
+            if entry["event_type"] == "closed":
                 self.assertEqual(entry["count"], 1)
 
     def test_record_event3(self):
         for entry in self.contributor1.frequency_activity:
-            if entry ["event_type"] == "labeled":
+            if entry["event_type"] == "labeled":
                 self.assertEqual(entry["count"], 0)
+
+    def test_record_event4(self):
+        self.contributor1.record_event("changed", self.issues[0].events[0].event_date)
+        self.assertIn({'event_type': 'changed', 'count': 1}, self.contributor1.frequency_activity)
+
 
     def test_get_first_date_str1(self):
         self.assertEqual(self.contributor1.get_first_date_str(), "2024-10-20")
