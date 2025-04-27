@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch, call
 from typing import List
 from data_loader import DataLoader
 from model import Issue,State,Event,User
@@ -6,7 +7,7 @@ import config
 from analysis_3 import Contributor
 from analysis_3 import Analysis3
 
-class TestAnalysis1(unittest.TestCase):
+class TestAnalysis3(unittest.TestCase):
     def setUp(self):
         # This method will run before each test case
         self.a3 = Analysis3()
@@ -53,12 +54,29 @@ class TestAnalysis1(unittest.TestCase):
         self.assertEqual(self.contributor2.get_first_date_str(), "N/A")    
 
     def test_get_last_date_str1(self):
-        self.assertEqual(self.contributor1.get_first_date_str(), "2024-10-20")
+        self.assertEqual(self.contributor1.get_last_date_str(), "2024-10-20")
     
     def test_get_last_date_str2(self):
-        self.assertEqual(self.contributor2.get_first_date_str(), "N/A")    
+        self.assertEqual(self.contributor2.get_last_date_str(), "N/A")    
     
+    @patch('builtins.print')
+    def test_show_contributor_by_name1(self,mock_print):
+        self.a3.show_contributor_by_name("ethan")
+        mock_print.assert_called_once_with("\nContributor 'ethan' not found.")
 
+    @patch('builtins.print')
+    def test_show_contributor_by_name2(self,mock_print):
+        self.a3.show_contributor_by_name("dbrtly")
+        self.assertEqual(mock_print.mock_calls, [call('\nContributor: dbrtly'),
+                                                call('   Total Contributions: 4'),
+                                                call('   First Contribution:  2024-10-20'),
+                                                call('   Last Contribution:   2024-10-20'),
+                                                call('   Active Duration:     0 days'),
+                                                call('   Breakdown by event type:'),
+                                                call('     - labeled: 2'),
+                                                call('     - subscribed: 1'),
+                                                call('     - mentioned: 1')])
+        
 
 if __name__ == "__main__":
     unittest.main()

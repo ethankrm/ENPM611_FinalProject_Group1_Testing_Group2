@@ -5,7 +5,7 @@ from model import Issue,State,Event
 import config
 from analysis_2 import IssueReopenRate
 
-class TestAnalysis1(unittest.TestCase):
+class TestAnalysis2(unittest.TestCase):
     def setUp(self):
         # This method will run before each test case
         self.a2 = IssueReopenRate()
