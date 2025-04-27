@@ -18,7 +18,7 @@ class TestAnalysis1(unittest.TestCase):
     def test_extract_kind2(self):
         self.assertEqual(self.a2._extract_kind(self.issues[0].labels), 'bug')
 
-    def test_extract_kind2(self):
+    def test_extract_kind3(self):
         self.assertEqual(self.a2._extract_kind(self.issues[1].labels), 'unknown')
 
     def test_check_reopened1(self):
@@ -28,7 +28,7 @@ class TestAnalysis1(unittest.TestCase):
     def test_check_reopened2(self):     
         self.assertEqual(self.a2._check_reopened(self.issues[0]), 0)
 
-    def test_check_reopened2(self):  
+    def test_check_reopened3(self):  
         for issue in self.issues:
             if 9721 == issue.number:
                 test_issue = issue
