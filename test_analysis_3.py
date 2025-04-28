@@ -1,5 +1,8 @@
 import unittest
 from unittest.mock import patch, call
+import matplotlib.pyplot as plt
+import pandas as pd
+
 from typing import List
 from data_loader import DataLoader
 from model import Issue,State,Event,User
@@ -13,16 +16,16 @@ class TestAnalysis3(unittest.TestCase):
         self.a3 = Analysis3()
         self.issues:List[Issue] = DataLoader().get_issues()
 
-        User1:User = User()
-        User1.name = "ethan"
-        self.contributor1 = Contributor(User1)
+        self.User1:User = User()
+        self.User1.name = "ethan"
+        self.contributor1 = Contributor(self.User1)
         self.contributor1.record_event("reopened", self.issues[0].events[0].event_date)
         self.contributor1.record_event("reopened", self.issues[0].events[1].event_date)
         self.contributor1.record_event("closed", self.issues[0].events[1].event_date)
 
-        User2:User = User()
-        User2.name = "dimbleby"
-        self.contributor2 = Contributor(User2)
+        self.User2:User = User()
+        self.User2.name = "dimbleby"
+        self.contributor2 = Contributor(self.User2)
 
 
 
@@ -60,9 +63,9 @@ class TestAnalysis3(unittest.TestCase):
         self.assertEqual(self.contributor2.get_last_date_str(), "N/A")    
     
     @patch('builtins.print')
-    def test_show_contributor_by_name1(self,mock_print):
+    def test_show_contributor_by_name1(self,mock_call):
         self.a3.show_contributor_by_name("ethan")
-        mock_print.assert_called_once_with("\nContributor 'ethan' not found.")
+        mock_call.assert_called_once_with("\nContributor 'ethan' not found.")
 
     @patch('builtins.print')
     def test_show_contributor_by_name2(self,mock_print):
@@ -77,6 +80,30 @@ class TestAnalysis3(unittest.TestCase):
                                                 call('     - subscribed: 1'),
                                                 call('     - mentioned: 1')])
         
+    @patch('builtins.print')
+    def test_show_contributor_by_name3(self,mock_print):
+        self.a3.show_contributor_by_name("dbrtly")
+        self.assertEqual(mock_print.mock_calls, [call('\nContributor: dbrtly'),
+                                                call('   Total Contributions: 4'),
+                                                call('   First Contribution:  2024-10-20'),
+                                                call('   Last Contribution:   2024-10-20'),
+                                                call('   Active Duration:     0 days'),
+                                                call('   Breakdown by event type:'),
+                                                call('     - labeled: 2'),
+                                                call('     - subscribed: 1'),
+                                                call('     - mentioned: 1')])   
+
+    @patch('builtins.print')
+    def test_show_top_contributors(self,mock_print):
+        self.a3.contributors = {"ethan":self.contributor1}
+        self.a3.show_top_contributors()
+        mock_print.assert_called()
+
+    @patch('matplotlib.pyplot.show')
+    def test_run(self,mock_show):
+        self.a3.run_all_analysis()
+        mock_show.assert_called_once()
+
 
 if __name__ == "__main__":
     unittest.main()
